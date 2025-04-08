@@ -3,8 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 class OCRWebService {
-  // 🔑 ใส่ API Key ที่คุณได้มาแทน YOUR_API_KEY
-  static const String _apiKey = 'K83611259588957'; // <-- แก้ตรงนี้
+  static const String _apiKey = 'K83611259588957'; // 🔑 ใช้ OCR.space
 
   static Future<String> scanImage(Uint8List imageBytes) async {
     final uri = Uri.parse('https://api.ocr.space/parse/image');
@@ -12,7 +11,8 @@ class OCRWebService {
     final request =
         http.MultipartRequest('POST', uri)
           ..fields['apikey'] = _apiKey
-          ..fields['language'] = 'eng'
+          ..fields['language'] =
+              'eng' // ✅ เปลี่ยนเป็นภาษาไทย
           ..files.add(
             http.MultipartFile.fromBytes(
               'file',
@@ -23,7 +23,6 @@ class OCRWebService {
 
     final streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);
-
     final result = json.decode(response.body);
 
     if (result['IsErroredOnProcessing'] == false) {
