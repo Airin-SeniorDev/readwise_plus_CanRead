@@ -15,7 +15,10 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
   Uint8List? _imageBytes;
   String scannedText = 'ยังไม่ได้สแกนภาพ';
   bool isLoading = false;
-  double speechRate = 1.0; // 🔊 ปรับความเร็วเสียง
+  double speechRate = 1.0;
+
+  // ✅ เพิ่ม language selector
+  String selectedLang = 'th-TH';
 
   Future<void> _pickImageAndScan() async {
     final result = await FilePicker.platform.pickFiles(
@@ -39,8 +42,8 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
         isLoading = false;
       });
 
-      // ✅ พูดด้วยความเร็วที่ผู้ใช้เลือก
-      TTSWebService.speak(text, speechRate);
+      // ✅ พูดด้วยภาษาและความเร็วที่ผู้ใช้เลือก
+      TTSWebService.speak(text, speechRate, selectedLang);
     } else {
       setState(() {
         scannedText = '❌ ไม่ได้เลือกรูปภาพ';
@@ -49,7 +52,7 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
   }
 
   void _speakAgain() {
-    TTSWebService.speak(scannedText, speechRate);
+    TTSWebService.speak(scannedText, speechRate, selectedLang);
   }
 
   @override
@@ -76,6 +79,28 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
                 icon: const Icon(Icons.volume_up),
                 label: const Text('Speak Again'),
               ),
+            const SizedBox(height: 20),
+
+            // ✅ ส่วนของการเลือกภาษาเสียง
+            const Text(
+              "🌐 เลือกภาษาเสียงพูด",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            DropdownButton<String>(
+              value: selectedLang,
+              items: const [
+                DropdownMenuItem(value: 'th-TH', child: Text('ภาษาไทย')),
+                DropdownMenuItem(value: 'en-US', child: Text('English')),
+              ],
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    selectedLang = value;
+                  });
+                }
+              },
+            ),
+
             const SizedBox(height: 20),
             const Text(
               "🔊 ความเร็วเสียงพูด",

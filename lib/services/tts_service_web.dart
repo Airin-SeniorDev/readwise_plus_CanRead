@@ -2,12 +2,13 @@
 library tts_web_service;
 
 import 'package:js/js.dart';
+import 'dart:js' as js;
 
 @JS('speakText')
-external void speakTextJs(String text, double rate);
+external void speakText(String text, String lang, double rate);
 
 class TTSWebService {
-  static void speak(String text, double rate) {
-    speakTextJs(text, rate);
+  static void speak(String text, double rate, String langCode) {
+    js.context.callMethod('speakText', [text, langCode, rate]);
   }
 }
