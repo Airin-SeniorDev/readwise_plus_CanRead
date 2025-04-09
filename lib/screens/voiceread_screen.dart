@@ -17,9 +17,7 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
   String scannedText = 'ยังไม่ได้สแกนภาพ';
   bool isLoading = false;
   double speechRate = 1.0;
-
-  // ✅ เพิ่ม language selector
-  String selectedLang = 'th-TH';
+  String selectedLang = 'th-TH'; // ภาษาเริ่มต้น
 
   Future<void> _pickImageAndScan() async {
     final result = await FilePicker.platform.pickFiles(
@@ -43,7 +41,6 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
         isLoading = false;
       });
 
-      // ✅ พูดด้วยภาษาและความเร็วที่ผู้ใช้เลือก
       TTSWebService.speak(text, speechRate, selectedLang);
     } else {
       setState(() {
@@ -74,15 +71,37 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
             if (_imageBytes != null) Image.memory(_imageBytes!, height: 200),
             const SizedBox(height: 20),
             if (isLoading) const CircularProgressIndicator(),
-            if (!isLoading && scannedText.trim().isNotEmpty)
+
+            // ✅ เงื่อนไขที่แสดงเฉพาะตอน OCR สำเร็จจริง
+            if (!isLoading &&
+                scannedText.trim().isNotEmpty &&
+                scannedText != 'ยังไม่ได้สแกนภาพ' &&
+                scannedText != '❌ ไม่ได้เลือกรูปภาพ') ...[
               ElevatedButton.icon(
                 onPressed: _speakAgain,
                 icon: const Icon(Icons.volume_up),
                 label: const Text('Speak Again'),
               ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 10),
+              ElevatedButton.icon(
+                onPressed: () async {
+                  await FavoriteService.saveFavorite(scannedText, selectedLang);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('⭐ บันทึกข้อความเรียบร้อยแล้ว'),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.star),
+                label: const Text('บันทึกข้อความ'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber.shade700,
+                  foregroundColor: Colors.black,
+                ),
+              ),
+            ],
 
-            // ✅ ส่วนของการเลือกภาษาเสียง
+            const SizedBox(height: 20),
             const Text(
               "🌐 เลือกภาษาเสียงพูด",
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -101,7 +120,6 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
                 }
               },
             ),
-
             const SizedBox(height: 20),
             const Text(
               "🔊 ความเร็วเสียงพูด",

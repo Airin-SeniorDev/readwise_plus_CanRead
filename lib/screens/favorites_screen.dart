@@ -30,7 +30,8 @@ class FavoritesScreen extends StatelessWidget {
           return ListView.builder(
             itemCount: docs.length,
             itemBuilder: (context, index) {
-              final data = docs[index].data() as Map<String, dynamic>;
+              final doc = docs[index];
+              final data = doc.data() as Map<String, dynamic>;
               final text = data['text'] ?? '';
               final lang = data['lang'] ?? '';
               final timestamp = data['created_at'] as Timestamp?;
@@ -46,16 +47,52 @@ class FavoritesScreen extends StatelessWidget {
                   title: Text(text),
                   subtitle: Text('🌐 $lang   🕒 $formattedDate'),
                   isThreeLine: true,
-                  trailing: IconButton(
-                    icon: const Icon(Icons.volume_up),
-                    tooltip: 'ฟังข้อความ',
-                    onPressed: () {
-                      TTSWebService.speak(
-                        text,
-                        1.0,
-                        lang,
-                      ); // ✅ พูดตามภาษาเดิมที่บันทึกไว้
-                    },
+                  trailing: Wrap(
+                    spacing: 8,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.volume_up),
+                        tooltip: 'ฟังข้อความ',
+                        onPressed: () {
+                          TTSWebService.speak(text, 1.0, lang);
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        tooltip: 'ลบข้อความ',
+                        onPressed: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder:
+                                (context) => AlertDialog(
+                                  title: const Text('ยืนยันการลบ'),
+                                  content: const Text(
+                                    'คุณต้องการลบข้อความนี้หรือไม่?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed:
+                                          () => Navigator.pop(context, false),
+                                      child: const Text('ยกเลิก'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed:
+                                          () => Navigator.pop(context, true),
+                                      child: const Text('ลบ'),
+                                    ),
+                                  ],
+                                ),
+                          );
+
+                          if (confirm == true) {
+                            await doc.reference.delete();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('🗑 ลบข้อความแล้ว')),
+                            );
+                          }
+                        },
+                      ),
+                    ],
                   ),
                 ),
               );
