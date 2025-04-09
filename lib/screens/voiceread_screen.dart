@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import '../services/ocr_web_service.dart';
+import '../services/favorite_service.dart';
 import '../services/tts_service_web.dart';
 
 class VoiceReadScreen extends StatefulWidget {

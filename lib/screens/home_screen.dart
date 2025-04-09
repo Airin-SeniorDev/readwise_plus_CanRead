@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'voiceread_screen.dart';
 import 'pricescan_screen.dart';
+import 'favorites_screen.dart'; // ✅ เพิ่ม import
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -33,6 +34,21 @@ class HomeScreen extends StatelessWidget {
               },
               icon: const Icon(Icons.search),
               label: const Text('PriceScan Mode'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+                );
+              },
+              icon: const Icon(Icons.star),
+              label: const Text('ดูข้อความที่บันทึก'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.amber.shade700,
+                foregroundColor: Colors.black,
+              ),
             ),
           ],
         ),
