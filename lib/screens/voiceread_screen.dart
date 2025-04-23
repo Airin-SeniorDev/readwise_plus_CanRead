@@ -1,12 +1,14 @@
+// 🔹 Import package ที่เกี่ยวข้อง
 import 'package:flutter/material.dart';
-import 'dart:typed_data';
-import 'package:file_picker/file_picker.dart';
-import '../services/ocr_web_service.dart';
-import '../services/favorite_service.dart';
-import '../services/tts_service_web.dart';
+import 'dart:typed_data'; // สำหรับข้อมูลภาพแบบ byte
+import 'package:file_picker/file_picker.dart'; // สำหรับเลือกไฟล์ภาพจากอุปกรณ์
+import '../services/ocr_web_service.dart'; // เรียกใช้ OCR service
+import '../services/favorite_service.dart'; // บันทึกข้อความเป็นรายการโปรด
+import '../services/tts_service_web.dart'; // Text-to-Speech สำหรับอ่านออกเสียง
 import 'favorites_screen.dart';
 import 'package:readwise_plus/screens/pricescan_screen.dart';
 
+// 🔹 สร้าง StatefulWidget สำหรับโหมด VoiceRead
 class VoiceReadScreen extends StatefulWidget {
   const VoiceReadScreen({super.key});
 
@@ -15,12 +17,13 @@ class VoiceReadScreen extends StatefulWidget {
 }
 
 class _VoiceReadScreenState extends State<VoiceReadScreen> {
-  Uint8List? _imageBytes;
-  String scannedText = 'ยังไม่ได้สแกนภาพ';
-  bool isLoading = false;
-  double speechRate = 1.0;
-  String selectedLang = 'th-TH'; // ภาษาเริ่มต้น
+  Uint8List? _imageBytes; // เก็บภาพที่เลือกในรูปแบบ byte
+  String scannedText = 'ยังไม่ได้สแกนภาพ'; // ข้อความ OCR ที่ตรวจเจอ
+  bool isLoading = false; // แสดงสถานะโหลด
+  double speechRate = 1.0; // ความเร็วเสียง
+  String selectedLang = 'th-TH'; // ภาษาเสียงเริ่มต้น
 
+  // 🔹 ฟังก์ชันเลือกภาพจากเครื่องแล้วสแกนหา text
   Future<void> _pickImageAndScan() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
@@ -36,14 +39,18 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
         scannedText = '🔄 กำลังสแกนข้อความ...';
       });
 
-      final text = await OCRWebService.scanImage(bytes);
+      final text = await OCRWebService.scanImage(bytes); // เรียก OCR API
 
       setState(() {
         scannedText = text;
         isLoading = false;
       });
 
-      TTSWebService.speak(text, speechRate, selectedLang);
+      TTSWebService.speak(
+        text,
+        speechRate,
+        selectedLang,
+      ); // อ่านออกเสียงข้อความ
     } else {
       setState(() {
         scannedText = '❌ ไม่ได้เลือกรูปภาพ';
@@ -51,17 +58,10 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
     }
   }
 
+  // 🔹 ฟังก์ชันพูดข้อความอีกครั้ง
   void _speakAgain() {
     TTSWebService.speak(scannedText, speechRate, selectedLang);
   }
-
-  // void _pausePlayback() {
-  //   TTSWebService.pause();
-  // }
-
-  // void _resumePlayback() {
-  //   TTSWebService.resume();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -77,13 +77,16 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
         foregroundColor: Colors.black,
         elevation: 0,
       ),
+
+      // 🔹 ส่วนเนื้อหา (Body)
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 20),
-            // Image placeholder area
+
+            // 🔸 พื้นที่แสดงภาพ
             Container(
               width: double.infinity,
               height: 200,
@@ -110,9 +113,10 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
                         ],
                       ),
             ),
+
             const SizedBox(height: 20),
 
-            // Upload File button
+            // 🔸 ปุ่มอัปโหลดไฟล์ภาพ
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -137,7 +141,7 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
 
             const SizedBox(height: 20),
 
-            // Add the language selection dropdown here
+            // 🔸 เลือกภาษาสำหรับอ่านออกเสียง
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -164,7 +168,8 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
             ),
 
             const SizedBox(height: 20),
-            // Controls Row (Speak again and Save text)
+
+            // 🔸 ปุ่ม Speak Again และ Save Text
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -212,33 +217,9 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
 
             const SizedBox(height: 30),
 
-            // Playback controls
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     const Text('10', style: TextStyle(fontWeight: FontWeight.bold)),
-            //     const SizedBox(width: 40),
-            //     Container(
-            //       decoration: BoxDecoration(
-            //         color: Colors.grey.shade200,
-            //         borderRadius: BorderRadius.circular(8),
-            //       ),
-            //       padding: const EdgeInsets.all(8),
-            //       child: const Icon(Icons.pause, size: 28),
-            //     ),
-            //     const SizedBox(width: 40),
-            //     const Text('10', style: TextStyle(fontWeight: FontWeight.bold)),
-            //   ],
-            // ),
-            const SizedBox(height: 25),
-
-            // Speed slider
+            // 🔸 ตัวควบคุมความเร็วเสียง
             Row(
               children: [
-                // const Text(
-                //   'Speed : ',
-                //   style: TextStyle(fontWeight: FontWeight.bold),
-                // ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: SliderTheme(
@@ -272,7 +253,7 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
 
             const SizedBox(height: 16),
 
-            // "ข้อความที่ตรวจเจอ" section
+            // 🔸 ข้อความที่ตรวจเจอจาก OCR
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -285,6 +266,7 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
               ),
             ),
             const SizedBox(height: 8),
+
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -308,11 +290,13 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
         ),
       ),
 
+      // 🔹 เมนูด้านล่าง (Bottom Navigation)
       bottomNavigationBar: Container(
         padding: const EdgeInsets.only(bottom: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            // ปุ่ม Home
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -338,6 +322,8 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
                 ),
               ],
             ),
+
+            // ปุ่ม VoiceRead (ปัจจุบัน)
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -365,7 +351,7 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
               ),
             ),
 
-            // ชอบ
+            // ปุ่ม Favorites
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -389,7 +375,7 @@ class _VoiceReadScreenState extends State<VoiceReadScreen> {
               ),
             ),
 
-            // หนังสือ
+            // ปุ่ม Price Book
             GestureDetector(
               onTap: () {
                 Navigator.push(

@@ -1,11 +1,14 @@
 // File: lib/screens/pricescan_screen.dart
-import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../models/book.dart'; // Make sure this path is correct
-import '../services/price_api.dart'; // Make sure this path is correct
-import 'favorites_screen.dart';
-import 'voiceread_screen.dart';
 
+// 🔹 นำเข้าแพ็กเกจพื้นฐานที่ใช้ในแอป
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart'; // สำหรับเปิดลิงก์เว็บในเบราว์เซอร์
+import '../models/book.dart'; // โมเดลข้อมูลหนังสือ
+import '../services/price_api.dart'; // API เรียกข้อมูลราคาหนังสือ
+import 'favorites_screen.dart'; // หน้ารายการโปรด
+import 'voiceread_screen.dart'; // หน้าอ่านออกเสียง
+
+// 🔹 StatefulWidget เพื่อให้สามารถเปลี่ยนแปลง UI เมื่อมีการค้นหา
 class PriceScanScreen extends StatefulWidget {
   const PriceScanScreen({super.key});
 
@@ -13,39 +16,33 @@ class PriceScanScreen extends StatefulWidget {
   _PriceScanScreenState createState() => _PriceScanScreenState();
 }
 
-// For the naming error in home_screen.dart - rename this alias
-// Add this line to home_screen.dart at top of file:
-// export 'pricescan_screen.dart' show PriceScanScreen as PriceScreen;
-
 class _PriceScanScreenState extends State<PriceScanScreen> {
+  // 🔹 ตัวแปรเก็บรายการหนังสือทั้งหมด และหนังสือที่ค้นหาได้
   List<Book> allBooks = [];
   List<Book> filteredBooks = [];
-  bool isLoading = true;
-  String searchQuery = '';
 
-  final TextEditingController _searchController = TextEditingController();
+  bool isLoading = true; // แสดง loading ระหว่างโหลดข้อมูล
+  String searchQuery = ''; // คำค้นหา
+
+  final TextEditingController _searchController =
+      TextEditingController(); // ควบคุมช่องค้นหา
 
   @override
   void initState() {
     super.initState();
-    fetchAllBooks();
+    fetchAllBooks(); // โหลดข้อมูลเมื่อเริ่มหน้าจอ
   }
 
+  // 🔹 ฟังก์ชันโหลดหนังสือจาก API ทั้ง naiin และ se-ed
   Future<void> fetchAllBooks() async {
     try {
       final naiinBooks = await ApiService.fetchNaiinBooks();
       final seedBooks = await ApiService.fetchSeedBooks();
-      final combined = [...naiinBooks, ...seedBooks];
-
-      // setState(() {
-      //   allBooks = combined;
-      //   filteredBooks = combined;
-      //   isLoading = false;
-      // });
+      final combined = [...naiinBooks, ...seedBooks]; // รวมข้อมูลทั้งหมด
 
       setState(() {
         allBooks = combined;
-        filteredBooks = []; // ยังไม่โชว์ข้อมูล
+        filteredBooks = []; // เริ่มต้นไม่แสดงรายการ
         isLoading = false;
       });
     } catch (e) {
@@ -56,6 +53,7 @@ class _PriceScanScreenState extends State<PriceScanScreen> {
     }
   }
 
+  // 🔹 ฟังก์ชันค้นหาหนังสือจากชื่อหรือผู้แต่ง
   void _search(String query) {
     final filtered =
         allBooks
@@ -66,26 +64,14 @@ class _PriceScanScreenState extends State<PriceScanScreen> {
             )
             .toList();
 
-    // ใน _search()
     setState(() {
       searchQuery = query;
       filteredBooks = filtered;
-      _searchController.clear(); // ✅ ล้างช่องค้นหา
+      _searchController.clear(); // ล้างช่องค้นหาเมื่อค้นหาเสร็จ
     });
   }
 
-  // // String _getStoreName(String url) {
-  // //   if (url.contains("naiin.com")) return "naiin";
-  // //   if (url.contains("se-ed.com")) return "se-ed";
-  // //   return "ร้านอื่น ๆ";
-  // // }
-
-  // // String _getSourceAPI(String url) {
-  // //   if (url.contains("naiin.com")) return "naiin";
-  // //   if (url.contains("se-ed.com")) return "seed";
-  // //   return "";
-  // // }
-
+  // 🔹 ฟังก์ชันเปิดลิงก์ไปยังร้านหนังสือ
   void _launchURL(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
@@ -99,41 +85,34 @@ class _PriceScanScreenState extends State<PriceScanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Search for books"),
+        title: const Text("Search for books"), // ชื่อหน้าจอ
         backgroundColor: Colors.white,
         elevation: 0,
       ),
 
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      // ✅ body ของ Scaffold ต้องไม่มี bottomNavigationBar อยู่ข้างใน
+
+      // 🔹 แสดง loading หรือเนื้อหาขึ้นอยู่กับสถานะ
       body:
           isLoading
               ? const Center(child: CircularProgressIndicator())
               : Column(
                 children: [
+                  // 🔸 ช่องค้นหา + ปุ่ม search
                   Padding(
-                    //tap ค้นหา
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
                       children: [
                         Expanded(
                           child: TextField(
                             controller: _searchController,
-                            onSubmitted:
-                                _search, // ✅ กด Enter บนคีย์บอร์ดเพื่อค้นหา
-                            textInputAction:
-                                TextInputAction
-                                    .search, // ✅ ให้ปุ่ม Enter เป็น Search
+                            onSubmitted: _search, // ค้นหาเมื่อกด enter
+                            textInputAction: TextInputAction.search,
                             decoration: InputDecoration(
                               hintText: ' ',
                               prefixIcon: const Icon(
                                 Icons.search,
-                                color: Color.fromARGB(
-                                  255,
-                                  134,
-                                  134,
-                                  134,
-                                ), // ✅ เปลี่ยนสีไอคอนที่นี่
+                                color: Color.fromARGB(255, 134, 134, 134),
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(50),
@@ -163,15 +142,10 @@ class _PriceScanScreenState extends State<PriceScanScreen> {
                               horizontal: 16,
                               vertical: 18,
                             ),
-                            minimumSize: const Size(
-                              100,
-                              40,
-                            ), // กำหนดความกว้างต่ำสุด 100 และความสูงต่ำสุด 40
+                            minimumSize: const Size(100, 40),
                           ),
                           child: const Row(
-                            //mainAxisSize: MainAxisSize.min,
                             children: [
-                              //Icon(Icons.search, color: Colors.grey),
                               SizedBox(width: 8, height: 20),
                               Text(
                                 "search",
@@ -187,12 +161,13 @@ class _PriceScanScreenState extends State<PriceScanScreen> {
                     ),
                   ),
 
-                  // ✅ เช็คกรณีไม่พบข้อมูล
+                  // 🔸 ถ้าไม่พบหนังสือที่ค้นหา
                   if (filteredBooks.isEmpty)
                     const Expanded(
                       child: Center(child: Text("ไม่พบหนังสือที่ค้นหา")),
                     )
                   else
+                    // 🔸 แสดงรายการหนังสือ
                     Expanded(
                       child: ListView.separated(
                         itemCount: filteredBooks.length,
@@ -216,6 +191,7 @@ class _PriceScanScreenState extends State<PriceScanScreen> {
                               ),
                               child: Row(
                                 children: [
+                                  // 🔸 โลโก้ร้าน
                                   if (source == "naiin" || source == "seed")
                                     Padding(
                                       padding: const EdgeInsets.only(right: 8),
@@ -233,6 +209,8 @@ class _PriceScanScreenState extends State<PriceScanScreen> {
                                             ),
                                       ),
                                     ),
+
+                                  // 🔸 รูปหน้าปกหนังสือ
                                   Padding(
                                     padding: const EdgeInsets.only(right: 12),
                                     child: ClipRRect(
@@ -259,6 +237,8 @@ class _PriceScanScreenState extends State<PriceScanScreen> {
                                       ),
                                     ),
                                   ),
+
+                                  // 🔸 รายละเอียดหนังสือ
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
@@ -290,6 +270,8 @@ class _PriceScanScreenState extends State<PriceScanScreen> {
                                       ],
                                     ),
                                   ),
+
+                                  // 🔸 ราคาหนังสือ
                                   SizedBox(
                                     width: 70,
                                     child: Text(
@@ -311,12 +293,13 @@ class _PriceScanScreenState extends State<PriceScanScreen> {
                 ],
               ),
 
-      // ✅ ย้าย bottomNavigationBar มาไว้ตรงนี้
+      // 🔹 แถบเมนูด้านล่าง (Bottom Navigation)
       bottomNavigationBar: Container(
         padding: const EdgeInsets.only(bottom: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            // 🔸 ปุ่ม Home
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -342,6 +325,8 @@ class _PriceScanScreenState extends State<PriceScanScreen> {
                 ),
               ],
             ),
+
+            // 🔸 ปุ่ม VoiceRead
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -369,7 +354,7 @@ class _PriceScanScreenState extends State<PriceScanScreen> {
               ),
             ),
 
-            // ชอบ
+            // 🔸 ปุ่ม Favorites
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -393,7 +378,7 @@ class _PriceScanScreenState extends State<PriceScanScreen> {
               ),
             ),
 
-            // หนังสือ
+            // 🔸 ปุ่ม Price Book
             GestureDetector(
               onTap: () {
                 Navigator.push(

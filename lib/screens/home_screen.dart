@@ -1,15 +1,24 @@
+// นำเข้าแพ็กเกจที่จำเป็นสำหรับ UI และนำทางไปยังหน้าต่างๆ
 import 'package:flutter/material.dart';
-import 'voiceread_screen.dart';
-import 'package:readwise_plus/screens/pricescan_screen.dart';
-import 'favorites_screen.dart';
+import 'voiceread_screen.dart'; // หน้าสำหรับโหมดอ่านออกเสียง
+import 'package:readwise_plus/screens/pricescan_screen.dart'; // หน้าสำหรับเปรียบเทียบราคาหนังสือ
+import 'favorites_screen.dart'; // หน้ารายการที่ถูกบันทึกไว้
 
+// คลาส StatelessWidget สำหรับหน้า Home
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key}); // Constructor แบบ const เพื่อประหยัด memory
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      // Scaffold: โครงสร้างหลักของหน้าจอ
+      backgroundColor: const Color.fromARGB(
+        255,
+        255,
+        255,
+        255,
+      ), // สีพื้นหลังขาว
+      // AppBar แบบโปร่งใส
       appBar: AppBar(
         title: const Text(
           'Home',
@@ -18,15 +27,21 @@ class HomeScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
+
+      // เนื้อหาหลักในหน้าจอ
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0), // margin รอบๆ เนื้อหา
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ReadWise+ Logo and Text
+            // แถวบนสุด: โลโก้ ReadWise+ และชื่อแอป
             Row(
               children: [
-                Image.asset('assets/images/logo.png', width: 40, height: 40),
+                Image.asset(
+                  'assets/images/logo.png',
+                  width: 40,
+                  height: 40,
+                ), // รูปโลโก้
                 const SizedBox(width: 12),
                 const Text(
                   'ReadWise+',
@@ -35,17 +50,17 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 24),
-
-            // VoiceRead Mode Card
+            const SizedBox(height: 24), // ระยะห่างก่อนการ์ดแรก
+            // การ์ด: VoiceRead Mode
             Card(
-              elevation: 2,
+              elevation: 2, // เงาการ์ด
               color: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12), // ขอบโค้ง
               ),
               child: InkWell(
                 onTap: () {
+                  // เมื่อแตะการ์ดนี้ → ไปหน้า VoiceRead
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const VoiceReadScreen()),
@@ -56,6 +71,7 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
                     children: [
+                      // ไอคอน
                       Container(
                         width: 40,
                         height: 40,
@@ -70,6 +86,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 16),
+                      // ข้อความ
                       const Text(
                         'VoiceRead Mode',
                         style: TextStyle(
@@ -83,9 +100,8 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 16),
-
-            // PriceScan Mode Card
+            const SizedBox(height: 16), // ระยะห่างก่อนการ์ดที่สอง
+            // การ์ด: PriceScan Mode
             Card(
               elevation: 2,
               color: Colors.white,
@@ -94,6 +110,7 @@ class HomeScreen extends StatelessWidget {
               ),
               child: InkWell(
                 onTap: () {
+                  // ไปหน้า PriceScan
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const PriceScanScreen()),
@@ -134,11 +151,13 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
 
+      // เมนูด้านล่าง (Bottom Navigation)
       bottomNavigationBar: Container(
         padding: const EdgeInsets.only(bottom: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            // ปุ่ม Home
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -164,6 +183,8 @@ class HomeScreen extends StatelessWidget {
                 ),
               ],
             ),
+
+            // ปุ่ม VoiceRead
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -191,7 +212,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            // ชอบ
+            // ปุ่ม Favorites
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -215,7 +236,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            // หนังสือ
+            // ปุ่ม Price Books
             GestureDetector(
               onTap: () {
                 Navigator.push(

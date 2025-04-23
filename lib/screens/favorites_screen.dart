@@ -1,19 +1,21 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import '../services/tts_service_web.dart';
-import 'voiceread_screen.dart';
-import 'package:readwise_plus/screens/pricescan_screen.dart';
+// นำเข้าแพ็กเกจที่จำเป็น
+import 'package:cloud_firestore/cloud_firestore.dart'; // สำหรับเชื่อมต่อ Firestore
+import 'package:flutter/material.dart'; // สำหรับสร้าง UI ใน Flutter
+import 'package:intl/intl.dart'; // สำหรับจัดรูปแบบวันที่
+import '../services/tts_service_web.dart'; // บริการแปลงข้อความเป็นเสียง
+import 'voiceread_screen.dart'; // นำเข้า screen ฟังเสียง
+import 'package:readwise_plus/screens/pricescan_screen.dart'; // นำเข้า screen เปรียบเทียบราคา
 
 class FavoritesScreen extends StatelessWidget {
-  const FavoritesScreen({super.key});
+  const FavoritesScreen({super.key}); // constructor แบบ const
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255), // สีพื้นหลัง
       appBar: AppBar(
         leading: IconButton(
+          // ปุ่มย้อนกลับ
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
@@ -23,16 +25,10 @@ class FavoritesScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
-        elevation: 0,
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.search),
-        //     onPressed: () {
-        //       // Implement search functionality
-        //     },
-        //   ),
-        // ],
+        elevation: 0, // ไม่มีเงา
       ),
+
+      // ตัวแสดงข้อมูลแบบ real-time จาก Firestore
       body: StreamBuilder<QuerySnapshot>(
         stream:
             FirebaseFirestore.instance
@@ -42,13 +38,16 @@ class FavoritesScreen extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(color: Colors.blue),
+              child: CircularProgressIndicator(
+                color: Colors.blue,
+              ), // แสดงวงกลมโหลด
             );
           }
 
-          final docs = snapshot.data?.docs ?? [];
+          final docs = snapshot.data?.docs ?? []; // ดึงเอกสารจาก snapshot
 
           if (docs.isEmpty) {
+            // ถ้าไม่มีข้อมูล
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -77,6 +76,7 @@ class FavoritesScreen extends StatelessWidget {
             );
           }
 
+          // แสดงรายการ favorite ทั้งหมด
           return ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: docs.length,
@@ -93,7 +93,7 @@ class FavoritesScreen extends StatelessWidget {
                       ? DateFormat('dd MMM yyyy • HH:mm').format(date)
                       : '-';
 
-              // Get language name for display
+              // ตั้งค่าภาษาแสดงผล
               String languageName = 'ไทย';
               if (lang == 'en-US') {
                 languageName = 'English';
@@ -114,7 +114,7 @@ class FavoritesScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Text content
+                    // ข้อความ
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Text(
@@ -124,13 +124,14 @@ class FavoritesScreen extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    // Divider
+                    // เส้นแบ่ง
                     Divider(
                       height: 1,
                       thickness: 1,
                       color: Colors.grey.shade100,
                     ),
-                    // Bottom info and actions row
+
+                    // บรรทัดล่างที่มีภาษา + วันที่ + ปุ่ม
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -138,7 +139,7 @@ class FavoritesScreen extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          // Language chip
+                          // ชิปแสดงภาษา
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 10,
@@ -169,7 +170,7 @@ class FavoritesScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          // Date chip
+                          // ชิปแสดงวันที่
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 10,
@@ -199,16 +200,16 @@ class FavoritesScreen extends StatelessWidget {
                             ),
                           ),
                           const Spacer(),
-                          // Action buttons
+                          // ปุ่มพูดข้อความ
                           IconButton(
                             icon: const Icon(Icons.volume_up),
                             color: Colors.blue,
                             tooltip: 'ฟังข้อความ',
                             onPressed: () {
-                              TTSWebService.speak(text, 1.0, lang);
+                              TTSWebService.speak(text, 1.0, lang); // เรียก TTS
                             },
                           ),
-
+                          // ปุ่มลบ
                           IconButton(
                             icon: const Icon(Icons.delete_outline),
                             color: Colors.red.shade400,
@@ -218,10 +219,7 @@ class FavoritesScreen extends StatelessWidget {
                                 context: context,
                                 builder:
                                     (context) => AlertDialog(
-                                      backgroundColor:
-                                          Colors
-                                              .grey
-                                              .shade50, // Changed dialog background color
+                                      backgroundColor: Colors.grey.shade50,
                                       title: const Text(
                                         'ยืนยันการลบ',
                                         style: TextStyle(
@@ -231,10 +229,7 @@ class FavoritesScreen extends StatelessWidget {
                                       ),
                                       content: const Text(
                                         'คุณต้องการลบข้อความนี้หรือไม่?',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black87,
-                                        ),
+                                        style: TextStyle(fontSize: 16),
                                       ),
                                       actions: [
                                         TextButton(
@@ -273,8 +268,10 @@ class FavoritesScreen extends StatelessWidget {
                                     ),
                               );
 
+                              // ถ้ายืนยัน = true
                               if (confirm == true) {
-                                await doc.reference.delete();
+                                await doc.reference
+                                    .delete(); // ลบ document นี้จาก Firestore
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('🗑 ลบข้อความแล้ว'),
@@ -295,6 +292,7 @@ class FavoritesScreen extends StatelessWidget {
         },
       ),
 
+      // เมนูด้านล่าง (Bottom Navigation)
       bottomNavigationBar: Container(
         padding: const EdgeInsets.only(bottom: 16),
         child: Row(
@@ -351,8 +349,6 @@ class FavoritesScreen extends StatelessWidget {
                 ],
               ),
             ),
-
-            // ชอบ
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -375,8 +371,6 @@ class FavoritesScreen extends StatelessWidget {
                 ],
               ),
             ),
-
-            // หนังสือ
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -407,11 +401,11 @@ class FavoritesScreen extends StatelessWidget {
         ),
       ),
 
+      // ปุ่มลอย เพิ่มหรือสแกนใหม่
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue,
         onPressed: () {
-          // Implement new scan or add functionality
-          Navigator.pop(context); // Return to main screen to scan
+          Navigator.pop(context); // กลับไปหน้าหลัก
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),
