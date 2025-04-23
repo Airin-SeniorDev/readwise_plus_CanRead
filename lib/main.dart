@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart'; // 👈 สำคัญ
 import 'package:readwise_plus/screens/home_screen.dart'; // 👈 เปลี่ยนเป็น path ของคุณ
-import 'screens/home_screen.dart';
+//import 'screens/home_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
@@ -29,10 +29,10 @@ class ReadWiseApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'ReadWise+',
-      debugShowCheckedModeBanner: false,
+      title: 'ReadWise+', 
+      debugShowCheckedModeBanner: false, //ปิดแถบ debug
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 255, 255, 255)),
         useMaterial3: true,
       ),
       home: const HomeScreen(),

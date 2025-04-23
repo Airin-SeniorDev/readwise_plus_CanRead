@@ -20,14 +20,14 @@ class DefaultFirebaseOptions {
       return web;
     }
     switch (defaultTargetPlatform) {
-      case TargetPlatform.android:
-        return android;
-      case TargetPlatform.iOS:
-        return ios;
-      case TargetPlatform.macOS:
-        return macos;
-      case TargetPlatform.windows:
-        return windows;
+      // case TargetPlatform.android:
+      //   return android;
+      // case TargetPlatform.iOS:
+      //   return ios;
+      // case TargetPlatform.macOS:
+      //   return macos;
+      // case TargetPlatform.windows:
+      //   return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -50,39 +50,39 @@ class DefaultFirebaseOptions {
     measurementId: 'G-DNG8PRF835',
   );
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDSUxt7e3ODPhI-xRikXRSLa5AH2zlpuo4',
-    appId: '1:134292748113:android:1ca00b6de5ffc002108570',
-    messagingSenderId: '134292748113',
-    projectId: 'readwiseplus',
-    storageBucket: 'readwiseplus.firebasestorage.app',
-  );
+  //   static const FirebaseOptions android = FirebaseOptions(
+  //     apiKey: 'AIzaSyDSUxt7e3ODPhI-xRikXRSLa5AH2zlpuo4',
+  //     appId: '1:134292748113:android:1ca00b6de5ffc002108570',
+  //     messagingSenderId: '134292748113',
+  //     projectId: 'readwiseplus',
+  //     storageBucket: 'readwiseplus.firebasestorage.app',
+  //   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAZPo7eR1v4efecCytWleTZ4uMg4jqjJbA',
-    appId: '1:134292748113:ios:198fd98aee949043108570',
-    messagingSenderId: '134292748113',
-    projectId: 'readwiseplus',
-    storageBucket: 'readwiseplus.firebasestorage.app',
-    iosBundleId: 'com.example.readwisePlus',
-  );
+  //   static const FirebaseOptions ios = FirebaseOptions(
+  //     apiKey: 'AIzaSyAZPo7eR1v4efecCytWleTZ4uMg4jqjJbA',
+  //     appId: '1:134292748113:ios:198fd98aee949043108570',
+  //     messagingSenderId: '134292748113',
+  //     projectId: 'readwiseplus',
+  //     storageBucket: 'readwiseplus.firebasestorage.app',
+  //     iosBundleId: 'com.example.readwisePlus',
+  //   );
 
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAZPo7eR1v4efecCytWleTZ4uMg4jqjJbA',
-    appId: '1:134292748113:ios:198fd98aee949043108570',
-    messagingSenderId: '134292748113',
-    projectId: 'readwiseplus',
-    storageBucket: 'readwiseplus.firebasestorage.app',
-    iosBundleId: 'com.example.readwisePlus',
-  );
+  //   static const FirebaseOptions macos = FirebaseOptions(
+  //     apiKey: 'AIzaSyAZPo7eR1v4efecCytWleTZ4uMg4jqjJbA',
+  //     appId: '1:134292748113:ios:198fd98aee949043108570',
+  //     messagingSenderId: '134292748113',
+  //     projectId: 'readwiseplus',
+  //     storageBucket: 'readwiseplus.firebasestorage.app',
+  //     iosBundleId: 'com.example.readwisePlus',
+  //   );
 
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDBTU7iFET7S40cVkE0eoGq9xmKY19bWUY',
-    appId: '1:134292748113:web:8a688358123e0c0b108570',
-    messagingSenderId: '134292748113',
-    projectId: 'readwiseplus',
-    authDomain: 'readwiseplus.firebaseapp.com',
-    storageBucket: 'readwiseplus.firebasestorage.app',
-    measurementId: 'G-2Q4H3LSW45',
-  );
+  //   static const FirebaseOptions windows = FirebaseOptions(
+  //     apiKey: 'AIzaSyDBTU7iFET7S40cVkE0eoGq9xmKY19bWUY',
+  //     appId: '1:134292748113:web:8a688358123e0c0b108570',
+  //     messagingSenderId: '134292748113',
+  //     projectId: 'readwiseplus',
+  //     authDomain: 'readwiseplus.firebaseapp.com',
+  //     storageBucket: 'readwiseplus.firebasestorage.app',
+  //     measurementId: 'G-2Q4H3LSW45',
+  //   );
 }
